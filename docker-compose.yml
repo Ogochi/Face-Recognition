@@ -1,0 +1,4 @@
+version: '3'
+services:
+  face_recognition:
+    build: face_recognition/
