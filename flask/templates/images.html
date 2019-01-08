@@ -1,0 +1,11 @@
+<!doctype html>
+
+<form action="/dodaj" method="POST">
+	<input type="text" name="id"></input>
+ 	<input type="text" name="people"></input>
+	<input type="submit"></input>
+</form>
+
+{% for image in images %}
+<p> {{image.id}} -> {{image.people}} </p>
+{% endfor %}
