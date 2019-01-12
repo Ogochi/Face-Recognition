@@ -29,6 +29,7 @@ def get_people_on_image(image_url, people):
 
     return result
 
+#MONGODB
 client = MongoClient("jnp3_mongo",27017)
 db = client.images
 
