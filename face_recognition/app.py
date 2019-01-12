@@ -1,20 +1,19 @@
-from flask import Flask
 from PIL import Image
 import requests
 from io import BytesIO
+from pymongo import MongoClient
 
+import pika
 import face_recognition
 
-app = Flask(__name__)
-
-def get_face_encoding( image_url ):
+def get_face_encoding(image_url):
     response = requests.get(image_url)
     image = face_recognition.load_image_file(BytesIO(response.content))
 
     return face_recognition.face_encodings(image)[0]
 
 # people = [[name, face_encoding], ...]
-def get_people_on_image( image_url, people ):
+def get_people_on_image(image_url, people):
     response = requests.get(image_url)
     image = face_recognition.load_image_file(BytesIO(response.content))
 
@@ -22,28 +21,43 @@ def get_people_on_image( image_url, people ):
     face_locations = face_recognition.face_locations(image)
 
     result = []
-
-
     for i in range(len(face_encodings)):
         for person in people:
-            if face_recognition.compare_faces([face_encodings[i]], person[1])[0]:
-                result.append([person[0], face_locations[i]])
+            if face_recognition.compare_faces([face_encodings[i]], person["face_encoding"])[0]:
+                result.append([person["person_name"], face_locations[i]])
                 break
 
     return result
 
+client = MongoClient("jnp3_mongo",27017)
+db = client.images
 
-@app.route('/')
-def hello_world():
-    image_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/President_Barack_Obama.jpg/192px-President_Barack_Obama.jpg";
+def handle_message(ch, method, properties, body):
+    body = body.split(':')
 
-    image_url2 = "https://upload.wikimedia.org/wikipedia/commons/0/0e/Donald_Trump_Pentagon_2017.jpg"
-    image_url3 = "https://cdn.cnn.com/cnnnext/dam/assets/170305143551-trump-obama-split-exlarge-169.jpg"
-    people = [["Obama", get_face_encoding(image_url)],
-        ["Trump", get_face_encoding(image_url2)]]
+    if body[0] == 'add_person':
+        # event:img_url:person_name
+        face_encoding = get_face_encoding(body[1])
+        db.encodings.insert_one({
+            "face_encoding": face_encoding,
+            "person_name": body[2]
+        })
 
-    return get_people_on_image(image_url3, people)
+    elif body[0] == 'add_image':
+        # event:image_url
+        people_on_image = get_people_on_image(body[1], db.encodings.find())
+        db.images.insert_one({
+            "image_url": body[1],
+            "people": people_on_image
+        })
 
 
+# RABBITMQ
+credentials = pika.PlainCredentials('user', '2137')
+connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit',
+    5672, '/', credentials))
+channel = connection.channel()
+channel.queue_declare(queue='face_recognition')
 
-    return "hello";
+channel.basic_consume(handle_message, queue='face_recognition', no_ack=True)
+channel.start_consuming()
