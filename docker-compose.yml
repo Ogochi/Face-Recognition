@@ -2,3 +2,15 @@ version: '3'
 services:
   face_recognition:
     build: face_recognition/
+    ports:
+      - 4999:5000
+
+  # rabbit:
+  #   image: bitnami/rabbitmq:latest
+  #   environment:
+  #     - RABBITMQ_PASSWORD=27017
+
+networks:
+  default:
+    external:
+      name: jnp3_network
