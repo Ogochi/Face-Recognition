@@ -5,6 +5,8 @@ from pymongo import MongoClient
 
 import pika
 import face_recognition
+import numpy as np
+
 
 def get_face_encoding(image_url):
     response = requests.get(image_url)
@@ -23,7 +25,7 @@ def get_people_on_image(image_url, people):
     result = []
     for i in range(len(face_encodings)):
         for person in people:
-            if face_recognition.compare_faces([face_encodings[i]], person["face_encoding"])[0]:
+            if face_recognition.compare_faces([face_encodings[i]], np.array(person["face_encoding"]))[0]:
                 result.append([person["person_name"], face_locations[i]])
                 break
 
@@ -34,13 +36,14 @@ client = MongoClient("jnp3_mongo",27017)
 db = client.images
 
 def handle_message(ch, method, properties, body):
-    body = body.split(':')
+    print(body, flush=True)
+    body = "{}".format(body)[2:-1].split(';')
 
     if body[0] == 'add_person':
         # event:img_url:person_name
         face_encoding = get_face_encoding(body[1])
         db.encodings.insert_one({
-            "face_encoding": face_encoding,
+            "face_encoding": face_encoding.tolist(),
             "person_name": body[2]
         })
 
@@ -61,4 +64,6 @@ channel = connection.channel()
 channel.queue_declare(queue='face_recognition')
 
 channel.basic_consume(handle_message, queue='face_recognition', no_ack=True)
+print("waiting", flush=True)
 channel.start_consuming()
+print("ended")
