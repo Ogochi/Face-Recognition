@@ -18,7 +18,13 @@ channel.queue_declare(queue='face_recognition')
 @app.route('/')
 def images():
 	print ("Wyswietlam!")
-	return render_template('images.html')
+	_images = db.images.find()
+	images = [image for image in _images]
+	_encodings = db.encodings.find()
+	encodings = [encoding for encoding in _encodings]
+	_people = db.people.find()
+	people = [hum for hum in _people]
+	return render_template('images.html',images=images,encodings=encodings,people=people)
 
 @app.route('/add_person', methods=['POST'])
 def add_person():

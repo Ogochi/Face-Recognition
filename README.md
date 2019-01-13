@@ -7,8 +7,8 @@
 `docker run --net jnp3_network --name jnp3_mongo -d mongo`
 
 # We need to run rabbitmq next
-`docker run --net jnp3_network -e RABBITMQ_PASSWORD=2137 --name rabbit bitnami/rabbitmq:latest`
-
+#OLD`docker run --net jnp3_network -e RABBITMQ_PASSWORD=2137 --name rabbit bitnami/rabbitmq:latest`
+`docker run --net jnp3_network -e RABBITMQ_DEFAULT_PASS=2137  -e RABBITMQ_DEFAULT_USER=user --name rabbit rabbitmq:latest`
 # Go to flask directory and then ( better to run it in second terminal to see logs )
 `docker-compose build
 docker-compose up`
