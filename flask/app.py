@@ -18,7 +18,13 @@ channel.queue_declare(queue='face_recognition')
 @app.route('/')
 def images():
 	print ("Wyswietlam!")
-	return render_template('images.html')
+	_images = db.images.find()
+	images = [image for image in _images]
+	_encodings = db.encodings.find()
+	encodings = [encoding for encoding in _encodings]
+	_people = db.people.find()
+	people = [hum for hum in _people]
+	return render_template('images.html',images=images,encodings=encodings,people=people)
 
 @app.route('/add_person', methods=['POST'])
 def add_person():
@@ -28,20 +34,22 @@ def add_person():
 	}
 	db.people.insert_one(person_doc)
 
-	message_body = 'add_person:{}:{}'.format(person_doc['image_url'], person_doc['person_name'])
+	message_body = 'add_person;{};{}'.format(person_doc['image_url'], person_doc['person_name'])
 	channel.basic_publish(exchange='',
-		routing_key='image',
+		routing_key='face_recognition',
 		body=message_body)
 
-	return redirect(url_for('images'))
+	print("Added person", flush=True)
+
+	return images()
 
 @app.route('/add_image', methods=['POST'])
 def add_image():
 	channel.basic_publish(exchange='',
-		routing_key='image',
-		body='add_image:{}'.format(request.form['image_url']))
+		routing_key='face_recognition',
+		body='add_image;{}'.format(request.form['image_url']))
 
-	return redirect(url_for('images'))
+	return images()
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0',debug=True)
