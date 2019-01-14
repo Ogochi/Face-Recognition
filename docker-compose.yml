@@ -1,16 +1,47 @@
 version: '3'
 services:
+  jnp3_mongo:
+    image: mongo
+  rabbit:
+    image: rabbitmq:latest
+    environment:
+      - RABBITMQ_DEFAULT_PASS=2137
+      - RABBITMQ_DEFAULT_USER=user
+
+  flask1:
+    build: flask/
+    ports:
+    - "5000:5000"
+    depends_on:
+      - "jnp3_mongo"
+      - "rabbit"
+  flask2:
+    build: flask/
+    ports:
+    - "5001:5000"
+    depends_on:
+      - "jnp3_mongo"
+      - "rabbit"
+  flask3:
+    build: flask/
+    ports:
+    - "5002:5000"
+    depends_on:
+      - "jnp3_mongo"
+      - "rabbit"
   face_recognition:
     build: face_recognition/
     ports:
       - 4999:5000
+    depends_on:
+      - "jnp3_mongo"
+      - "rabbit"
 
-  # rabbit:
-  #   image: bitnami/rabbitmq:latest
-  #   environment:
-  #     - RABBITMQ_PASSWORD=27017
-
-networks:
-  default:
-    external:
-      name: jnp3_network
+  jnp3_nginx:
+    build: nginx/
+    ports:
+      - "3333:8080"
+    depends_on:
+      - "flask1"
+      - "flask2"
+      - "flask3"

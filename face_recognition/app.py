@@ -4,8 +4,37 @@ from io import BytesIO
 from pymongo import MongoClient
 
 import pika
+import time
 import face_recognition
 import numpy as np
+
+
+def setup_mongo():
+    try:
+        client = MongoClient("jnp3_mongo",27017)
+        global db
+        db = client.images
+    except:
+        time.sleep(2)
+        setup_mongo()
+
+# MONGODB
+setup_mongo()
+
+def setup_rabbit():
+    try:
+        credentials = pika.PlainCredentials('user', '2137')
+        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit',
+            5672, '/', credentials))
+        global channel
+        channel = connection.channel()
+        channel.queue_declare(queue='face_recognition')
+    except:
+        time.sleep(2)
+        setup_rabbit()
+
+# RABBITMQ
+setup_rabbit()
 
 
 def get_face_encoding(image_url):
@@ -31,10 +60,6 @@ def get_people_on_image(image_url, people):
 
     return result
 
-#MONGODB
-client = MongoClient("jnp3_mongo",27017)
-db = client.images
-
 def handle_message(ch, method, properties, body):
     print(body, flush=True)
     body = "{}".format(body)[2:-1].split(';')
@@ -54,14 +79,6 @@ def handle_message(ch, method, properties, body):
             "image_url": body[1],
             "people": people_on_image
         })
-
-
-# RABBITMQ
-credentials = pika.PlainCredentials('user', '2137')
-connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit',
-    5672, '/', credentials))
-channel = connection.channel()
-channel.queue_declare(queue='face_recognition')
 
 channel.basic_consume(handle_message, queue='face_recognition', no_ack=True)
 print("waiting", flush=True)

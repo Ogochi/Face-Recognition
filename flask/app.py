@@ -1,19 +1,36 @@
 from flask import Flask, redirect, url_for, request,render_template
 from pymongo import MongoClient
 import pika
+import time
 
 app = Flask(__name__)
 
+def setup_mongo():
+    try:
+        client = MongoClient("jnp3_mongo",27017)
+        global db
+        db = client.images
+    except:
+        time.sleep(2)
+        setup_mongo()
+
 # MONGODB
-client = MongoClient("jnp3_mongo",27017)
-db = client.images
+setup_mongo()
+
+def setup_rabbit():
+    try:
+        credentials = pika.PlainCredentials('user', '2137')
+        connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit',
+            5672, '/', credentials))
+        global channel
+        channel = connection.channel()
+        channel.queue_declare(queue='face_recognition')
+    except:
+        time.sleep(2)
+        setup_rabbit()
 
 # RABBITMQ
-credentials = pika.PlainCredentials('user', '2137')
-connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit',
-    5672, '/', credentials))
-channel = connection.channel()
-channel.queue_declare(queue='face_recognition')
+setup_rabbit()
 
 @app.route('/')
 def images():
