@@ -61,25 +61,25 @@
 </head>
 <body>
 
-<form class="form-inline" action="/add_image" method="POST">
+	<form class="form-inline" action="/add_person" method="POST">
 	  <div class="form-group">
-	    <input type="text" class="form-control" id="url" NAME="image_url" placeholder="URL">
+	    <input type="text" class="form-control" id="url" name="image_url" placeholder="URL">
 	  </div>
-	  <button type="submit" class="btn btn-danger navbar-btn">Add URL</button>
+	  <div class="form-group">
+	    <input type="text" class="form-control" id="name" name="person_name" placeholder="Name">
+	  </div>
+	  <button type="submit" class="btn btn-danger navbar-btn">Add</button>
 	</form>
 
-
-<h1> Images</h1>
+<h1> People added</h1>
 <div class="container marketing">
 	<section id="blog-landing">
-{% for image in images %}
+{% for human in people %}
 		<article class="white-panel">
-			<img src="{{image.image_url}}" alt="">
-<p> {{image.people}}  <p>
+			<img src="{{human.image_url}}" alt="">
+<p> {{human.person_name}}  <p>
 		</article>
 {% endfor %}
-
-
 </section>
 </div>
 
@@ -262,3 +262,4 @@
 
 </body>
 </html>
+

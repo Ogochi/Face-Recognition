@@ -43,6 +43,29 @@ def images():
 	people = [hum for hum in _people]
 	return render_template('images.html',images=images,encodings=encodings,people=people)
 
+@app.route('/people')
+def people():
+	print ("Wyswietlam!")
+	_images = db.images.find()
+	images = [image for image in _images]
+	_encodings = db.encodings.find()
+	encodings = [encoding for encoding in _encodings]
+	_people = db.people.find()
+	people = [hum for hum in _people]
+	return render_template('people.html',images=images,encodings=encodings,people=people)
+
+@app.route('/old_view')
+def old_view():
+	print ("Wyswietlam!")
+	_images = db.images.find()
+	images = [image for image in _images]
+	_encodings = db.encodings.find()
+	encodings = [encoding for encoding in _encodings]
+	_people = db.people.find()
+	people = [hum for hum in _people]
+	return render_template('old.html',images=images,encodings=encodings,people=people)
+
+
 @app.route('/add_person', methods=['POST'])
 def add_person():
 	person_doc = {
@@ -59,6 +82,7 @@ def add_person():
 	print("Added person", flush=True)
 
 	return images()
+
 
 @app.route('/add_image', methods=['POST'])
 def add_image():
