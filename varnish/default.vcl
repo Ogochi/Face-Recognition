@@ -30,7 +30,7 @@ sub vcl_backend_response {
     #
     # Here you clean the response headers, removing silly Set-Cookie headers
     # and other mistakes your backend does.
-    set beresp.ttl = 30s;
+    set beresp.ttl = 2s;
 }
  
 sub vcl_deliver {
