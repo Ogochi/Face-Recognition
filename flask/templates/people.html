@@ -56,10 +56,16 @@
 		margin-top: -15px;
 		transition: all 0.3s easy-in-out;
 	}
+
+	h1 {
+		color: antiquewhite;
+	}
 </style>
 
 </head>
 <body>
+
+<h1>People</h1>
 
 	<form class="form-inline" action="/add_person" method="POST">
 	  <div class="form-group">
@@ -71,7 +77,7 @@
 	  <button type="submit" class="btn btn-danger navbar-btn">Add</button>
 	</form>
 
-<h1> People added</h1>
+
 <div class="container marketing">
 	<section id="blog-landing">
 {% for human in people %}
@@ -262,4 +268,3 @@
 
 </body>
 </html>
-

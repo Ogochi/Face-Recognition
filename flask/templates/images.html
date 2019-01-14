@@ -56,11 +56,17 @@
 		margin-top: -15px;
 		transition: all 0.3s easy-in-out;
 	}
+
+	h1 {
+		color: antiquewhite;
+	}
 </style>
 
 </head>
 <body>
 
+
+<h1> Images</h1>
 <form class="form-inline" action="/add_image" method="POST">
 	  <div class="form-group">
 	    <input type="text" class="form-control" id="url" NAME="image_url" placeholder="URL">
@@ -69,13 +75,19 @@
 	</form>
 
 
-<h1> Images</h1>
 <div class="container marketing">
 	<section id="blog-landing">
 {% for image in images %}
 		<article class="white-panel">
-			<img src="{{image.image_url}}" alt="">
-<p> {{image.people}}  <p>
+			<img src="{{image.image_url}}" alt="" />
+			<p>
+			{% for person in image.people %}
+				 {{person[0]}}
+				 {% if not loop.last %}
+    				,
+				 {% endif %}
+			{% endfor %}
+			</p>
 		</article>
 {% endfor %}
 
