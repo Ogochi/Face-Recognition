@@ -45,3 +45,9 @@ services:
       - "flask1"
       - "flask2"
       - "flask3"
+  jnp3_varnish:
+    build: varnish/
+    ports:
+      - 8080:80
+    depends_on:
+      - "jnp3_nginx"
