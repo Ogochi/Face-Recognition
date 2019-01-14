@@ -21,7 +21,7 @@ def setup_rabbit():
     try:
         credentials = pika.PlainCredentials('user', '2137')
         connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit',
-            5672, '/', credentials))
+            5672, '/', credentials, heartbeat_interval=0))
         global channel
         channel = connection.channel()
         channel.queue_declare(queue='face_recognition')
