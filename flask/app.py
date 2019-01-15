@@ -10,7 +10,6 @@ app = Flask(__name__)
 
 def setup_mysql():
 	try:
-
 		global mysql_conn
 		mysql_conn = pymysql.connect(host='jnp3_mysql',user='michal',password='kichal',db='baza')
 		# global mysql_conn
@@ -18,9 +17,6 @@ def setup_mysql():
 	except:
 		time.sleep(2)
 		setup_mysql()
-
-# MYSQL
-setup_mysql()
 
 def setup_mongo():
     try:
@@ -58,9 +54,14 @@ def images():
 	encodings = [encoding for encoding in _encodings]
 	_people = db.people.find()
 	people = [hum for hum in _people]
+
+	setup_mysql()
 	with mysql_conn.cursor() as cursor:
 		cursor.execute("SELECT * FROM images")
 		results = cursor.fetchall()
+		cursor.close()
+		mysql_conn.close()
+
 		print( results,flush=True )
 		return render_template('images.html', results=results, toList=ast.literal_eval)
 
@@ -89,9 +90,13 @@ def old_view():
 
 @app.route('/mysql')
 def get_images():
+	setup_mysql()
 	with mysql_conn.cursor() as cursor:
 		cursor.execute("SELECT * FROM images")
 		result = cursor.fetchall()
+		cursor.close()
+		mysql_conn.close()
+
 		return str(result)
 
 
@@ -123,9 +128,13 @@ def add_image():
 
 @app.route('/image/<int:img_id>')
 def show_image(img_id):
+		setup_mysql()
 		with mysql_conn.cursor() as cursor:
 			cursor.execute("SELECT * FROM images WHERE {} = id".format(img_id))
 			results = cursor.fetchall()
+			cursor.close()
+			mysql_conn.close()
+
 			print( results,flush=True )
 			return render_template('img.html',image=results[0], people=ast.literal_eval(results[0][2]))
 

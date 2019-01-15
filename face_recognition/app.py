@@ -20,8 +20,6 @@ def setup_mysql():
 	except:
 		time.sleep(2)
 		setup_mysql()
-# MYSQL
-setup_mysql()
 
 def setup_mongo():
     try:
@@ -95,9 +93,13 @@ def handle_message(ch, method, properties, body):
                 "people": people_on_image
             })
 
+            setup_mysql()
             with mysql_conn.cursor() as cursor:
                 cursor.execute("INSERT INTO images (url,osoby) VALUES(\"{}\",\"{}\")".format(body[1], people_on_image))
             mysql_conn.commit()
+            cursor.close()
+            mysql_conn.close()
+
     except:
         print("Error during handling message!")
 
