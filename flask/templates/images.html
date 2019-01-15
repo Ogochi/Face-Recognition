@@ -77,26 +77,19 @@
 
 <div class="container marketing">
 	<section id="blog-landing">
-{% for image in images %}
+{% for image in results %}
 		<article class="white-panel">
-			<img src="{{image.image_url}}" alt="" />
+			<a href="/image/{{image[0]}}">
+				<img src="{{image[1]}}" alt="" />
+			</a>
 			<p>
-			{% for person in image.people %}
+			{% for person in toList(image[2]) %}
 				 {{person[0]}}
 				 {% if not loop.last %}
     				,
 				 {% endif %}
 			{% endfor %}
 			</p>
-		</article>
-{% endfor %}
-
-{% for image in results %}
-		<article class="white-panel">
-			<a href="/image/{{image[0]}}" >
-			<img src={{image[1]}} alt="">
-			</a>
-<p> {{image[2]}}  <p>
 		</article>
 {% endfor %}
 

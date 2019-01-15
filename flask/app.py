@@ -3,13 +3,14 @@ import pymysql.cursors
 from pymongo import MongoClient
 import pika
 import time
+import ast
 
 app = Flask(__name__)
 
 
 def setup_mysql():
 	try:
-		
+
 		global mysql_conn
 		mysql_conn = pymysql.connect(host='jnp3_mysql',user='michal',password='kichal',db='baza')
 		# global mysql_conn
@@ -17,9 +18,9 @@ def setup_mysql():
 	except:
 		time.sleep(2)
 		setup_mysql()
+
 # MYSQL
 setup_mysql()
-
 
 def setup_mongo():
     try:
@@ -61,7 +62,7 @@ def images():
 		cursor.execute("SELECT * FROM images")
 		results = cursor.fetchall()
 		print( results,flush=True )
-		return render_template('images.html',images=images,encodings=encodings,people=people,results=results)
+		return render_template('images.html', results=results, toList=ast.literal_eval)
 
 @app.route('/people')
 def people():
@@ -122,10 +123,11 @@ def add_image():
 
 @app.route('/image/<int:img_id>')
 def show_image(img_id):
-        with mysql_conn.cursor() as cursor:
-                cursor.execute("SELECT * FROM images WHERE {} = id".format(img_id))
-                results = cursor.fetchall()
-                return render_template('img.html',results=results)
+		with mysql_conn.cursor() as cursor:
+			cursor.execute("SELECT * FROM images WHERE {} = id".format(img_id))
+			results = cursor.fetchall()
+			print( results,flush=True )
+			return render_template('img.html',image=results[0], people=ast.literal_eval(results[0][2]))
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0',debug=True)

@@ -12,7 +12,7 @@ import numpy as np
 
 def setup_mysql():
 	try:
-		
+
 		global mysql_conn
 		mysql_conn = pymysql.connect(host='jnp3_mysql',user='root',password='example',db='baza')
 		# global mysql_conn
@@ -94,12 +94,12 @@ def handle_message(ch, method, properties, body):
                 "image_url": body[1],
                 "people": people_on_image
             })
+
+            with mysql_conn.cursor() as cursor:
+                cursor.execute("INSERT INTO images (url,osoby) VALUES(\"{}\",\"{}\")".format(body[1], people_on_image))
+            mysql_conn.commit()
     except:
         print("Error during handling message!")
-
-        with mysql_conn.cursor() as cursor:
-            cursor.execute("INSERT INTO images (url,osoby) VALUES(\"{}\",\"{}\")".format(body[1],people_on_image))
-            mysql_conn.commit()
 
 channel.basic_consume(handle_message, queue='face_recognition', no_ack=True)
 print("waiting", flush=True)
