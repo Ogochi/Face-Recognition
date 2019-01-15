@@ -4,6 +4,7 @@ from pymongo import MongoClient
 import pika
 import time
 import ast
+import base64
 
 app = Flask(__name__)
 
@@ -11,16 +12,14 @@ app = Flask(__name__)
 def setup_mysql():
 	try:
 		global mysql_conn
-		mysql_conn = pymysql.connect(host='jnp3_mysql',user='michal',password='kichal',db='baza')
-		# global mysql_conn
-		# mysql_conn = mysql_client.connection.cursor()
+		mysql_conn = pymysql.connect(host='mysql',user='michal',password='pass',db='images_db')
 	except:
 		time.sleep(2)
 		setup_mysql()
 
 def setup_mongo():
     try:
-        client = MongoClient("jnp3_mongo",27017)
+        client = MongoClient("mongo",27017)
         global db
         db = client.images
     except:
@@ -47,7 +46,6 @@ setup_rabbit()
 
 @app.route('/')
 def images():
-	print ("Wyswietlam!")
 	_images = db.images.find()
 	images = [image for image in _images]
 	_encodings = db.encodings.find()
@@ -62,12 +60,10 @@ def images():
 		cursor.close()
 		mysql_conn.close()
 
-		print( results,flush=True )
 		return render_template('images.html', results=results, toList=ast.literal_eval)
 
 @app.route('/people')
 def people():
-	print ("Wyswietlam!")
 	_images = db.images.find()
 	images = [image for image in _images]
 	_encodings = db.encodings.find()
@@ -75,29 +71,6 @@ def people():
 	_people = db.people.find()
 	people = [hum for hum in _people]
 	return render_template('people.html',images=images,encodings=encodings,people=people)
-
-@app.route('/old_view')
-def old_view():
-	print ("Wyswietlam!")
-	_images = db.images.find()
-	images = [image for image in _images]
-	_encodings = db.encodings.find()
-	encodings = [encoding for encoding in _encodings]
-	_people = db.people.find()
-	people = [hum for hum in _people]
-	return render_template('old.html',images=images,encodings=encodings,people=people)
-
-
-@app.route('/mysql')
-def get_images():
-	setup_mysql()
-	with mysql_conn.cursor() as cursor:
-		cursor.execute("SELECT * FROM images")
-		result = cursor.fetchall()
-		cursor.close()
-		mysql_conn.close()
-
-		return str(result)
 
 
 @app.route('/add_person', methods=['POST'])
@@ -113,8 +86,6 @@ def add_person():
 		routing_key='face_recognition',
 		body=message_body)
 
-	print("Added person", flush=True)
-
 	return images()
 
 
@@ -126,6 +97,9 @@ def add_image():
 
 	return images()
 
+def encodeStr(s):
+	 return "-".join([str(ord(c)) for c in s])
+
 @app.route('/image/<int:img_id>')
 def show_image(img_id):
 		setup_mysql()
@@ -135,8 +109,7 @@ def show_image(img_id):
 			cursor.close()
 			mysql_conn.close()
 
-			print( results,flush=True )
-			return render_template('img.html',image=results[0], people=ast.literal_eval(results[0][2]))
+			return render_template('img.html',image=results[0], people=ast.literal_eval(results[0][2]), encode=encodeStr)
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0',debug=True)

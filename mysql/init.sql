@@ -1,8 +1,8 @@
-USE baza;
+USE images_db;
 CREATE TABLE images  (
     id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
     url VARCHAR(300) NOT NULL,
-    osoby VARCHAR(300) NOT NULL
+    people VARCHAR(300) NOT NULL
     ) 
     PARTITION BY RANGE COLUMNS(id)(
     PARTITION p0 VALUES LESS THAN (5),

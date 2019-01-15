@@ -7,17 +7,15 @@
 	<nav class="navbar navbar-inverse">
 	  <div class="container-fluid">
 	    <div class="navbar-header">
-	      <a class="navbar-brand" href="#">JNP3</a>
+	      <a class="navbar-brand" href="/">JNP3</a>
 	    </div>
 	    <ul class="nav navbar-nav">
-	      <!-- <li class="active"><a href="#">Home</a></li> -->
 	      <li><a href="/">Images</a></li>
 	      <li><a href="/people">People</a></li>
 	    </ul>
 	  </div>
 	</nav>
-	<title> JNP3 </title>
-	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"> -->
+	<title> Face recognition </title>
 
 	<script src="https://code.jquery.com/jquery-3.3.1.js"> </script>
 <style>
@@ -61,7 +59,7 @@
 
 	{% for person in people %}
 		{% if person[1] %}
-			.frame-{{person[0]}} {
+			.frame-{{encode(person[0])}} {
 				position: absolute;
 				border: 4px solid red;
 				background-color: transparent;
@@ -82,7 +80,7 @@
 	<div class="img-wrapper">
 		<img id="imagge" src="{{image[1]}}" alt="" />
 		{% for person in people %}
-			<div class="frame-{{person[0]}}"></div>
+			<div class="frame-{{encode(person[0])}}"></div>
 		{% endfor %}
 	</div>
 
@@ -99,7 +97,7 @@
 <script>
 	function fixFrames() {
 		{% for person in people %}
-			$(".frame-{{person[0]}}").css("left", {{person[1][3]}} + $("#imagge").offset().left);
+			$(".frame-{{encode(person[0])}}").css("left", {{person[1][3]}} + $("#imagge").offset().left);
 		{% endfor %}
 	}
 

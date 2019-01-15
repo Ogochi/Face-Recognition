@@ -14,16 +14,14 @@ def setup_mysql():
 	try:
 
 		global mysql_conn
-		mysql_conn = pymysql.connect(host='jnp3_mysql',user='root',password='example',db='baza')
-		# global mysql_conn
-		# mysql_conn = mysql_client.connection.cursor()
+		mysql_conn = pymysql.connect(host='mysql',user='root',password='example',db='images_db')
 	except:
 		time.sleep(2)
 		setup_mysql()
 
 def setup_mongo():
     try:
-        client = MongoClient("jnp3_mongo",27017)
+        client = MongoClient("mongo",27017)
         global db
         db = client.images
     except:
@@ -74,7 +72,6 @@ def get_people_on_image(image_url, people):
 
 def handle_message(ch, method, properties, body):
     try:
-        print(body, flush=True)
         body = "{}".format(body)[2:-1].split(';')
 
         if body[0] == 'add_person':
@@ -95,7 +92,7 @@ def handle_message(ch, method, properties, body):
 
             setup_mysql()
             with mysql_conn.cursor() as cursor:
-                cursor.execute("INSERT INTO images (url,osoby) VALUES(\"{}\",\"{}\")".format(body[1], people_on_image))
+                cursor.execute("INSERT INTO images (url,people) VALUES(\"{}\",\"{}\")".format(body[1], people_on_image))
             mysql_conn.commit()
             cursor.close()
             mysql_conn.close()
