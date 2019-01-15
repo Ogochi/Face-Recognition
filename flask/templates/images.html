@@ -91,6 +91,14 @@
 		</article>
 {% endfor %}
 
+{% for image in results %}
+		<article class="white-panel">
+			<a href="/image/{{image[0]}}" >
+			<img src={{image[1]}} alt="">
+			</a>
+<p> {{image[2]}}  <p>
+		</article>
+{% endfor %}
 
 </section>
 </div>

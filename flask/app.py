@@ -57,7 +57,11 @@ def images():
 	encodings = [encoding for encoding in _encodings]
 	_people = db.people.find()
 	people = [hum for hum in _people]
-	return render_template('images.html',images=images,encodings=encodings,people=people)
+	with mysql_conn.cursor() as cursor:
+		cursor.execute("SELECT * FROM images")
+		results = cursor.fetchall()
+		print( results,flush=True )
+		return render_template('images.html',images=images,encodings=encodings,people=people,results=results)
 
 @app.route('/people')
 def people():
