@@ -3,11 +3,25 @@ import requests
 from io import BytesIO
 from pymongo import MongoClient
 
+import pymysql.cursors
 import pika
 import time
 import face_recognition
 import numpy as np
 
+
+def setup_mysql():
+	try:
+		
+		global mysql_conn
+		mysql_conn = pymysql.connect(host='jnp3_mysql',user='root',password='example',db='baza')
+		# global mysql_conn
+		# mysql_conn = mysql_client.connection.cursor()
+	except:
+		time.sleep(2)
+		setup_mysql()
+# MYSQL
+setup_mysql()
 
 def setup_mongo():
     try:
@@ -82,6 +96,10 @@ def handle_message(ch, method, properties, body):
             })
     except:
         print("Error during handling message!")
+
+        with mysql_conn.cursor() as cursor:
+            cursor.execute("INSERT INTO images (url,osoby) VALUES(\"{}\",\"{}\")".format(body[1],people_on_image))
+            mysql_conn.commit()
 
 channel.basic_consume(handle_message, queue='face_recognition', no_ack=True)
 print("waiting", flush=True)

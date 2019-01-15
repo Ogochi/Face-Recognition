@@ -7,6 +7,10 @@ services:
     environment:
       - RABBITMQ_DEFAULT_PASS=2137
       - RABBITMQ_DEFAULT_USER=user
+  jnp3_mysql:
+    build: mysql/
+    ports:
+      - 3306:3306
 
   flask1:
     build: flask/
@@ -15,6 +19,7 @@ services:
     depends_on:
       - "jnp3_mongo"
       - "rabbit"
+      - "jnp3_mysql"
   flask2:
     build: flask/
     ports:
@@ -22,6 +27,7 @@ services:
     depends_on:
       - "jnp3_mongo"
       - "rabbit"
+      - "jnp3_mysql"
   flask3:
     build: flask/
     ports:
@@ -29,6 +35,7 @@ services:
     depends_on:
       - "jnp3_mongo"
       - "rabbit"
+      - "jnp3_mysql"
   face_recognition:
     build: face_recognition/
     ports:
@@ -36,6 +43,7 @@ services:
     depends_on:
       - "jnp3_mongo"
       - "rabbit"
+      - "jnp3_mysql"
 
   jnp3_nginx:
     build: nginx/
@@ -51,3 +59,9 @@ services:
       - 8080:80
     depends_on:
       - "jnp3_nginx"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9000:8080

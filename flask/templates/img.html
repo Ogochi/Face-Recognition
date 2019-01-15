@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<nav class="navbar navbar-inverse">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="#">JNP3</a>
+	    </div>
+	    <ul class="nav navbar-nav">
+	      <!-- <li class="active"><a href="#">Home</a></li> -->
+	      <li><a href="/">Images</a></li>
+	      <li><a href="/people">People</a></li>
+	    </ul>
+	  </div>
+	</nav>
+	<title> JNP3 </title>
+	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous"> -->
+
+	<script src="https://code.jquery.com/jquery-3.3.1.js"> </script>
+<style>
+
+	form {
+		display: inline-block;
+	}
+	body{
+		background: #242323;
+		font-family: tahoma;
+		text-align: center;
+	}
+
+	#blog-landing{
+		margin-top: 81px;
+		position: relative;
+		max-width: 100%;
+		width: 100%;
+	}
+
+	.white-panel{
+		position: absolute;
+		background: orange;
+		box-shadow: 0px 1px 2px rgba(0,0,0,0.3);
+		padding: 10px;
+	}
+
+	.white-panel:hover{
+		box-shadow: 1px 1px 10px rgba(0,0,0,0.5);
+		margin-top: -15px;
+		transition: all 0.3s easy-in-out;
+	}
+</style>
+
+</head>
+<body>
+
+{% for result in results %}
+			<img src="{{result[1]}}" alt="">
+<p> {{result[2]}}  <p>
+{% endfor %}
+
+
+</section>
+</div>
+
+
+</body>
+</html>

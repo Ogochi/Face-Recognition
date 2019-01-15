@@ -2,3 +2,4 @@ face_recognition
 pika
 requests
 pymongo
+PyMySQL

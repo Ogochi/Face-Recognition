@@ -1,9 +1,25 @@
 from flask import Flask, redirect, url_for, request,render_template
+import pymysql.cursors
 from pymongo import MongoClient
 import pika
 import time
 
 app = Flask(__name__)
+
+
+def setup_mysql():
+	try:
+		
+		global mysql_conn
+		mysql_conn = pymysql.connect(host='jnp3_mysql',user='michal',password='kichal',db='baza')
+		# global mysql_conn
+		# mysql_conn = mysql_client.connection.cursor()
+	except:
+		time.sleep(2)
+		setup_mysql()
+# MYSQL
+setup_mysql()
+
 
 def setup_mongo():
     try:
@@ -66,6 +82,14 @@ def old_view():
 	return render_template('old.html',images=images,encodings=encodings,people=people)
 
 
+@app.route('/mysql')
+def get_images():
+	with mysql_conn.cursor() as cursor:
+		cursor.execute("SELECT * FROM images")
+		result = cursor.fetchall()
+		return str(result)
+
+
 @app.route('/add_person', methods=['POST'])
 def add_person():
 	person_doc = {
@@ -91,6 +115,13 @@ def add_image():
 		body='add_image;{}'.format(request.form['image_url']))
 
 	return images()
+
+@app.route('/image/<int:img_id>')
+def show_image(img_id):
+        with mysql_conn.cursor() as cursor:
+                cursor.execute("SELECT * FROM images WHERE {} = id".format(img_id))
+                results = cursor.fetchall()
+                return render_template('img.html',results=results)
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0',debug=True)
