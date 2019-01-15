@@ -60,15 +60,17 @@
 	}
 
 	{% for person in people %}
-	.frame-{{person[0]}} {
-		position: absolute;
-		border: 4px solid red;
-		background-color: transparent;
-		top: {{person[1][0]}}px;
-		left: {{person[1][3]}}px;
-		height: {{person[1][2] - person[1][0]}}px;
-		width: {{person[1][1] - person[1][3]}}px;
-	}
+		{% if person[1] %}
+			.frame-{{person[0]}} {
+				position: absolute;
+				border: 4px solid red;
+				background-color: transparent;
+				top: {{person[1][0]}}px;
+				left: {{person[1][3]}}px;
+				height: {{person[1][2] - person[1][0]}}px;
+				width: {{person[1][1] - person[1][3]}}px;
+			}
+		{% endif %}
 	{% endfor %}
 
 </style>
