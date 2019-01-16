@@ -37,13 +37,9 @@ services:
 
   nginx:
     build: nginx/
+    ports:
+      - 8080:8080
     depends_on:
       - "front1"
       - "front2"
       - "front3"
-  varnish:
-    build: varnish/
-    ports:
-      - 8080:80
-    depends_on:
-      - "nginx"
