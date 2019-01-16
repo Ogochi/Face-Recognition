@@ -9,37 +9,27 @@ services:
       - RABBITMQ_DEFAULT_USER=user
   mysql:
     build: mysql/
-    ports:
-      - 3306:3306
 
   front1:
     build: front/
-    ports:
-    - "5000:5000"
     depends_on:
       - "mongo"
       - "rabbit"
       - "mysql"
   front2:
     build: front/
-    ports:
-    - "5001:5000"
     depends_on:
       - "mongo"
       - "rabbit"
       - "mysql"
   front3:
     build: front/
-    ports:
-    - "5002:5000"
     depends_on:
       - "mongo"
       - "rabbit"
       - "mysql"
   face_recognition:
     build: face_recognition/
-    ports:
-      - 4999:5000
     depends_on:
       - "mongo"
       - "rabbit"
@@ -47,8 +37,6 @@ services:
 
   nginx:
     build: nginx/
-    ports:
-      - "3333:8080"
     depends_on:
       - "front1"
       - "front2"
@@ -59,9 +47,3 @@ services:
       - 8080:80
     depends_on:
       - "nginx"
-
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 9000:8080
