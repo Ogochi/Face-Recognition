@@ -10,7 +10,17 @@ Project resulted in service consisiting of following parts:
 - Mongo and MySQL databases - storing data
 - RabbitMQ - offloading computations from frontend services to face recognition service
 
-## Views and features
+## Features
+- Round robin **load balancing** using Nginx
+- Easy deployment with **Docker** using docker-compose
+- **Caching** requests for 2 seconds using Nginx
+- **Partitioning** in MySQL database
+- **Asynchronous** processing of incoming heavy requests with images thanks to RabbitMQ
+
+## System diagram
+![System diagram](https://i.imgur.com/Cem3B8i.png)
+
+## Views
 Main view - added images with lists of people on them
 ![Main view](https://i.imgur.com/uccqKEz.png)
 
@@ -28,5 +38,7 @@ Single image view - fullsize image with marked faces
 ## How to run
 After executing commands mentioned below whole service should be accessible on `localhost:8080`.
 
-`docker-compose build;
-docker-compose up`
+```
+docker-compose build;
+docker-compose up;
+```
